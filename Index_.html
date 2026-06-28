@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>To-Do List</title>
+
+<style>
+body{
+    font-family:Arial;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    background:#0a3d62;
+}
+
+.container{
+    width:400px;
+    background:#fff;
+    padding:20px;
+    border-radius:12px;
+}
+
+h1{
+    text-align:center;
+}
+
+.input-box{
+    display:flex;
+    gap:10px;
+}
+
+input{
+    flex:1;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+button{
+    padding:10px 15px;
+    border:none;
+    background:#007bff;
+    color:#fff;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+ul{
+    list-style:none;
+    padding:0;
+    margin-top:20px;
+}
+
+li{
+    background:#f2f2f2;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.done{
+    text-decoration:line-through;
+    color:gray;
+}
+
+.clear-btn{
+    margin-top:10px;
+    background:red;
+    width:100%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>To-Do List</h1>
+
+    <div class="input-box">
+        <input type="text" id="taskInput" placeholder="Add task...">
+        <button onclick="addTask()">+</button>
+    </div>
+
+    <!-- Clear All Button -->
+    <button class="clear-btn" onclick="clearAll()">Clear All</button>
+
+    <ul id="taskList"></ul>
+</div>
+
+<script>
+const taskList = document.getElementById("taskList");
+
+function save(){
+    localStorage.setItem("tasks", taskList.innerHTML);
+}
+
+function addTask(){
+    let input = document.getElementById("taskInput");
+    if(input.value.trim() === "") return;
+
+    let li = document.createElement("li");
+    li.innerHTML = `◻️ ${input.value}`;
+
+    li.onclick = function(){
+        if(li.classList.contains("done")){
+            li.classList.remove("done");
+            li.innerHTML = li.innerHTML.replace("✅️","◻️");
+        } else {
+            li.classList.add("done");
+            li.innerHTML = li.innerHTML.replace("◻️","✅️");
+        }
+        save();
+    };
+
+    taskList.appendChild(li);
+    input.value = "";
+    save();
+}
+
+// Clear all tasks
+function clearAll(){
+    taskList.innerHTML = "";
+    localStorage.removeItem("tasks");
+}
+
+// Load saved tasks
+window.onload = function(){
+    taskList.innerHTML = localStorage.getItem("tasks") || "";
+
+    Array.from(taskList.children).forEach(li=>{
+        li.onclick = function(){
+            if(li.classList.contains("done")){
+                li.classList.remove("done");
+                li.innerHTML = li.innerHTML.replace("✅️","◻️");
+            } else {
+                li.classList.add("done");
+                li.innerHTML = li.innerHTML.replace("◻️","✅️");
+            }
+            save();
+        };
+    });
+};
+</script>
+
+</body>
+</html>
